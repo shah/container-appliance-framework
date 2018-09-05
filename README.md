@@ -12,7 +12,7 @@ Install basic utilities:
 
 Intial setup:
 
-    git clone shah/container-appliance-framework CAF
+    git clone https://github.com/shah/container-appliance-framework CAF
     cd CAF
 
     make switch-to-zsh
