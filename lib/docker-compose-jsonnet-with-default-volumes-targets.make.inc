@@ -15,6 +15,8 @@ $(DOCKER_COMPOSE_YAML): $(DOCKER_COMPOSE_JSONNET)
 	        --ext-str defaultNetworkName=$(DOCKER_NETWORK_NAME) \
 			--ext-str containerRootPath=$(CONTAINER_PATH) \
 			--ext-str currentUserName=$(CURRENT_USER) \
+			--ext-str currentUserId=$(CURRENT_USER_ID) \
+			--ext-str currentUserGroupId=$(CURRENT_USER_GROUP_ID) \
 			--ext-str currentUserHome=$(CURRENT_USER_HOME) \
 			-y -o $(DOCKER_COMPOSE_YAML) \
 			-S $(DOCKER_COMPOSE_JSONNET)
@@ -27,7 +29,7 @@ configure: $(DOCKER_COMPOSE_YAML)
 create-volumes: configure
 	printf "Creating Docker volume "
 	docker volume create $(CONTAINER_NAME)
-	docker volume inspect $(CONTAINER_NAME) --format "Volume $(CONTAINER_NAME) mountpoint: {{json .Mountpoint }}"
+	docker volume inspect $(CONTAINER_NAME) --format "Volume $(CONTAINER_NAME) mountpoint: '{{printf .Mountpoint }}'"
 
 ## If the container is running, inspect its settings
 inspect: configure
@@ -49,7 +51,7 @@ stop: configure
 
 ## DANGEROUS: Stop the container and DELETE ALL volumes
 clean: stop 
-	printf "Removing volume $(CONTAINER_NAME)"
+	printf "Removing volume "
 	docker volume rm $(CONTAINER_NAME)
 	echo "Removing generated docker-compose YAML config"
 	rm -f $(DOCKER_COMPOSE_YAML)

@@ -15,6 +15,8 @@ $(DOCKER_COMPOSE_YAML): $(DOCKER_COMPOSE_JSONNET)
 	        --ext-str defaultNetworkName=$(DOCKER_NETWORK_NAME) \
 			--ext-str containerRootPath=$(CONTAINER_PATH) \
 			--ext-str currentUserName=$(CURRENT_USER) \
+			--ext-str currentUserId=$(CURRENT_USER_ID) \
+			--ext-str currentUserGroupId=$(CURRENT_USER_GROUP_ID) \
 			--ext-str currentUserHome=$(CURRENT_USER_HOME) \
 			-y -o $(DOCKER_COMPOSE_YAML) \
 			-S $(DOCKER_COMPOSE_JSONNET)

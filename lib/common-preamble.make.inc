@@ -1,4 +1,6 @@
 CURRENT_USER := $(shell echo `whoami`)
+CURRENT_USER_ID := $(shell echo `id -u`)
+CURRENT_USER_GROUP_ID := $(shell echo `id -g`)
 CURRENT_USER_HOME := $(HOME)
 CURRENT_DIR_PATH := $(shell echo `pwd`)
 CURRENT_DIR_NAME := $(shell basename `pwd`)
