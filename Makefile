@@ -10,6 +10,7 @@ DOCKER_COMPOSE_INSTALLED := $(shell command -v docker-compose 2> /dev/null)
 DOCKER_NETWORK_DEFAULT := 'appliance'
 DOCKER_NETWORKS_SETUP := $(shell sudo docker network ls | grep $(DOCKER_NETWORK_DEFAULT))
 CTOP_INSTALLED := $(shell command -v ctop 2> /dev/null)
+PROM_NODE_EXPORTER_INSTALLED := $(shell command -v prometheus-node-exporter 2> /dev/null)
 
 default: help
 
@@ -84,7 +85,7 @@ setup-docker-networks:
 	docker network create $(DOCKER_NETWORK_DEFAULT)
 
 ## See if all developer dependencies are installed
-check-dependencies: check-jsonnet check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop 
+check-dependencies: check-jsonnet check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop check-prometheus-node-exporter
 	printf "[*] "
 	make -v | head -1
 	echo "[*] Shell: $$SHELL"
@@ -141,6 +142,17 @@ ifndef CTOP_INSTALLED
 else
 	printf "[*] "
 	ctop -v
+endif
+
+check-prometheus-node-exporter:
+ifndef PROM_NODE_EXPORTER_INSTALLED
+	echo "Did not find promethe, creating link to shell/ctop version"
+	sudo ln -s $(CWD)/shell/ctop-v0.7.1 /usr/local/bin/ctop
+	ls -al /usr/local/bin/ctop
+	printf "[ ] Node Exporter not installed, run sudo apt-get install prometheus-node-exporter"
+else
+	printf "[*] "
+	prometheus-node-exporter --version 2>&1 | head -n 1
 endif
 
 TARGET_MAX_CHAR_NUM=20
