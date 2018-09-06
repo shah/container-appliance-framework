@@ -1,5 +1,7 @@
 # The Container Appliance Framework (CAF)
-CAF is an opinionated set of building blocks for building portable micro servers. These "appliances" can be developer sandboxes or small servers that act as gateways for B2B or other enterprise applications.
+CAF is an opinionated set of building blocks for creating and deploying portable micro servers using
+Git as a delivery vehicle. These "appliances" can be developer sandboxes or small servers that act as
+gateways for B2B or other enterprise applications.
 
 Prerequisites:
 
