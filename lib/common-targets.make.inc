@@ -6,12 +6,6 @@ help:
 	@echo 'Usage:'
 	@echo '  ${YELLOW}make${RESET} ${GREEN}<target>${RESET}'
 	@echo ''
-	@echo 'Environment:'		
-	@echo '  CURRENT_DIR_PATH: $(CURRENT_DIR_PATH)'
-	@echo '  CONTAINER_NAME: $(CONTAINER_NAME)'
-	@echo '  DOCKER_NETWORK_NAME: $(DOCKER_NETWORK_NAME)'
-	@echo '  IS_SUBMODULE: $(IS_SUBMODULE)'
-	@echo ''
 	@echo 'Targets:'
 	@awk '/^[a-zA-Z\-\_0-9]+:/ { \
 		helpMessage = match(lastLine, /^## (.*)/); \
@@ -22,3 +16,14 @@ help:
 		} \
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
+	@echo ''
+	@echo 'Environment:'		
+	@echo '  CAF_HOME: $(CAF_HOME)'
+	@echo '  APPLIANCE_HOME: $(APPLIANCE_HOME)'	
+	@echo '  PRIMARY_CONF_FILE: $(PRIMARY_CONF_FILE)'		
+	@echo '  IS_SUBMODULE: $(IS_SUBMODULE)'
+	@echo '  CURRENT_USER: $(CURRENT_USER)'
+	@echo '  CURRENT_USER_HOME: $(CURRENT_USER_HOME)'	
+	@echo '  CONTAINER_NAME: $(CONTAINER_NAME)'
+	@echo '  CONTAINER_PATH: $(CONTAINER_PATH)'
+	@echo '  DOCKER_NETWORK_NAME: $(DOCKER_NETWORK_NAME)'
