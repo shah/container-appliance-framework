@@ -1,0 +1,35 @@
+# my global config
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+      monitor: 'appliance'
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first.rules"
+  # - "second.rules"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:8010']
+
+  # this config assumes Ubuntu 18.04 prometheus-node-exporter package is installed in Docker host
+  - job_name: "node"
+    scrape_interval: "15s"
+    static_configs:
+    - targets: ['192.168.1.206:9100']
+
+  # use instructions at https://docs.docker.com/config/thirdparty/prometheus/
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['192.168.1.206:9323']
+
