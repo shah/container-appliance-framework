@@ -1,6 +1,6 @@
 # Default Makefile targets for simple docker-compose.yml.jsonnet source
 # with an external default network and no volumes.
-# 
+
 DOCKER_COMPOSE_YAML := docker-compose.yml
 DOCKER_COMPOSE_JSONNET := $(DOCKER_COMPOSE_YAML).jsonnet
 
@@ -8,9 +8,14 @@ default: configure
 
 $(DOCKER_COMPOSE_YAML): $(DOCKER_COMPOSE_JSONNET)
 	echo "Generating $(DOCKER_COMPOSE_YAML) from $(DOCKER_COMPOSE_JSONNET)"
-	jsonnet --ext-str containerName=$(CONTAINER_NAME) \
+	jsonnet --ext-str CAF_HOME=$(CAF_HOME) \
+			--ext-str APPLIANCE_HOME=$(APPLIANCE_HOME) \
+			--ext-str IS_SUBMODULE=$(IS_SUBMODULE) \
+	        --ext-str containerName=$(CONTAINER_NAME) \
 	        --ext-str defaultNetworkName=$(DOCKER_NETWORK_NAME) \
-			--ext-str containerRootPath=$(CURRENT_DIR_PATH) \
+			--ext-str containerRootPath=$(CONTAINER_PATH) \
+			--ext-str currentUserName=$(CURRENT_USER) \
+			--ext-str currentUserHome=$(CURRENT_USER_HOME) \
 			-y -o $(DOCKER_COMPOSE_YAML) \
 			-S $(DOCKER_COMPOSE_JSONNET)
 	echo "Validating $(DOCKER_COMPOSE_YAML)"
