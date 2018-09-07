@@ -24,6 +24,10 @@ inspect: configure
 logs: configure
 	docker logs $(CONTAINER_NAME)
 
+## If the container is running, show its ports
+ports: configure
+	docker port $(CONTAINER_NAME)
+
 ## Start the container and all dependencies
 start: configure create-volumes
 	docker-compose up -d --force-recreate
