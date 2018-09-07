@@ -1,6 +1,7 @@
 generate-container-conf:
 	echo "Generating $(CONTAINER_CONF_GENERATED_FILE) from $(CONTAINER_CONF_JSONNET_TMPL)"
 	jsonnet --ext-str GENERATED_ON="`date`" \
+			--ext-str DOCKER_HOST_IP_ADDR=$(DOCKER_HOST_IP_ADDR) \
 			--ext-str CAF_HOME=$(CAF_HOME) \
 			--ext-str APPLIANCE_HOME=$(APPLIANCE_HOME) \
 			--ext-str IS_SUBMODULE=$(IS_SUBMODULE) \
