@@ -6,6 +6,7 @@
 	CAF_HOME : std.extVar('CAF_HOME'),
 	APPLIANCE_HOME : std.extVar('APPLIANCE_HOME'),
 	IS_SUBMODULE : std.extVar('IS_SUBMODULE'),
+	DOCKER_HOST_IP_ADDR : std.extVar('DOCKER_HOST_IP_ADDR'),
 
 	containerName : std.extVar('containerName'),
 	containerRootPath : std.extVar('containerRootPath'),

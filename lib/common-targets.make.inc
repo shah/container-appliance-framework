@@ -46,6 +46,7 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 	@echo ''
 	@echo 'Environment:'		
+	@echo '  DOCKER_HOST_IP_ADDR: $(DOCKER_HOST_IP_ADDR)'
 	@echo '  CAF_HOME: $(CAF_HOME)'
 	@echo '  APPLIANCE_HOME: $(APPLIANCE_HOME)'	
 	@echo '  PRIMARY_CONF_FILE: $(PRIMARY_CONF_FILE)'		

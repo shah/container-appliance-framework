@@ -1,3 +1,4 @@
+DOCKER_HOST_IP_ADDR := $(shell echo `/sbin/ifconfig eth0 | grep -i mask | awk '{print $$2}'| cut -f2 -d:`)
 CURRENT_USER := $(shell echo `whoami`)
 CURRENT_USER_ID := $(shell echo `id -u`)
 CURRENT_USER_GROUP_ID := $(shell echo `id -g`)
