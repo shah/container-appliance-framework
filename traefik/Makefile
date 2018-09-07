@@ -9,17 +9,7 @@ DOCKER_COMPOSE_JSONNET := $(DOCKER_COMPOSE_YAML).jsonnet
 
 default: configure
 
-$(DOCKER_COMPOSE_YAML): $(DOCKER_COMPOSE_JSONNET)
-	echo "Generating $(DOCKER_COMPOSE_YAML) from $(DOCKER_COMPOSE_JSONNET)"
-	jsonnet --ext-str containerName=$(CONTAINER_NAME) \
-	        --ext-str defaultNetworkName=$(DOCKER_NETWORK_NAME) \
-			--ext-str containerRootPath=$(CURRENT_DIR_PATH) \
-			-y -o $(DOCKER_COMPOSE_YAML) \
-			-S $(DOCKER_COMPOSE_JSONNET)
-	echo "Validating $(DOCKER_COMPOSE_YAML)"
-	docker-compose config --quiet
-
-configure: $(DOCKER_COMPOSE_YAML) 
+configure: generate-container-conf $(DOCKER_COMPOSE_YAML) 
 
 setup-dependencies: configure
 	echo "Preparing ACME config permissions for LetsEncrypt configuration"
@@ -55,5 +45,7 @@ clean: stop
 	rm -rf $(LOG_PATH)
 	echo "Removing generated docker-compose YAML config"
 	rm -f $(DOCKER_COMPOSE_YAML)
+	echo "Removing generated container config"
+	rm -f $(CONTAINER_CONF_GENERATED_FILE)
 
 include ../lib/common-targets.make.inc

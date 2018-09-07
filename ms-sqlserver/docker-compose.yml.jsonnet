@@ -1,13 +1,12 @@
-//local appliance = import "../appliance.libsonnet";
-local containerName = std.extVar('containerName');
-local defaultNetworkName = std.extVar('defaultNetworkName');
+local applianceConf = import "../CAF.conf.jsonnet";
+local containerConf = import "container.conf.json";
 
 [{
 	version: '3',
 
 	services: {
 		container: {
-			container_name: containerName,
+			container_name: containerConf.containerName,
 			image: 'microsoft/mssql-server-linux',
 			restart: 'always',
 			ports: ['1433:1433'],
@@ -20,7 +19,7 @@ local defaultNetworkName = std.extVar('defaultNetworkName');
 	networks: {
 		network: {
 			external: {
-				name: defaultNetworkName
+				name: containerConf.defaultNetworkName
 			},
 		},
 	},
@@ -28,7 +27,7 @@ local defaultNetworkName = std.extVar('defaultNetworkName');
 	volumes: {
 		volume: {
 			external: {
-				name: containerName
+				name: containerConf.containerName
 			},
 		},
 	},

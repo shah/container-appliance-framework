@@ -26,3 +26,6 @@ PRIMARY_CONF_FILE = $(CAF_CONF_FILE)
 APPLIANCE_HOME = $(CAF_HOME)
 IS_SUBMODULE = 0
 endif
+
+CONTAINER_CONF_JSONNET_TMPL := $(CAF_HOME)/lib/container.conf.tmpl.jsonnet
+CONTAINER_CONF_GENERATED_FILE := container.conf.json

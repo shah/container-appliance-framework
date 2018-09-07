@@ -1,22 +1,19 @@
-//local appliance = import "../appliance.libsonnet";
-local containerName = std.extVar('containerName');
-local defaultNetworkName = std.extVar('defaultNetworkName');
-local currentUserName = std.extVar('currentUserName');
-local currentUserHome = std.extVar('currentUserHome');
+local applianceConf = import "../CAF.conf.jsonnet";
+local containerConf = import "container.conf.json";
 
 [{
 	version: '3',
 
 	services: {
 		container: {
-			container_name: containerName,
+			container_name: containerConf.containerName,
 			image: 'dperson/samba',
 			restart: 'always',
 			ports: ['139:139', '445:445'],
 			networks: ['network'],
-			command: '-s ' + '"' + currentUserName + '_Home;/'+ currentUserName +'_Home;yes;no;yes;admin;admin"',
+			command: '-s ' + '"' + containerConf.currentUserName + '_Home;/'+ containerConf.currentUserName +'_Home;yes;no;yes;admin;admin"',
 			volumes: [
-				currentUserHome + ':/'+ currentUserName +'_Home',
+				containerConf.currentUserHome + ':/'+ containerConf.currentUserName +'_Home',
 			],
 			environment: [
 				'USERID=1000',
@@ -32,7 +29,7 @@ local currentUserHome = std.extVar('currentUserHome');
 	networks: {
 		network: {
 			external: {
-				name: defaultNetworkName
+				name: containerConf.defaultNetworkName
 			},
 		},
 	},

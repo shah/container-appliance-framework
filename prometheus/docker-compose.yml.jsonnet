@@ -1,7 +1,5 @@
-local containerName = std.extVar('containerName');
-local containerRootPath = std.extVar('containerRootPath');
-local defaultNetworkName = std.extVar('defaultNetworkName');
-local CAFconf = import "../CAF.conf.jsonnet";
+local applianceConf = import "../CAF.conf.jsonnet";
+local containerConf = import "container.conf.json";
 
 local webServicePort = 8010;
 local promConfigFileInContainer = '/etc/prometheus/prometheus.yml';
@@ -12,7 +10,7 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 
 	services: {
 		container: {
-			container_name: containerName,
+			container_name: containerConf.containerName,
 			image: 'prom/prometheus:latest',
 			command: '--storage.tsdb.path='+ tsdbStoragePathInContainer +' --web.listen-address :'+ webServicePort +' --config.file=' + promConfigFileInContainer,
 			restart: 'always',
@@ -20,16 +18,16 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 			networks: ['network'],
 			volumes: [
 				'volume:' + tsdbStoragePathInContainer,
-				containerRootPath + '/prometheus.yml:' + promConfigFileInContainer,
+				containerConf.containerRootPath + '/prometheus.yml:' + promConfigFileInContainer,
 			],
 			user: "root", // SNS: by default Prometheus container runs as nobody:nogroup but volumes are owned by root so we switch
 			labels: {
 				'traefik.enable': 'true',
-				'traefik.docker.network': defaultNetworkName,
-				'traefik.domain': containerName + '.' + CAFconf.applianceFQDN,
-				'traefik.backend': containerName,
+				'traefik.docker.network': containerConf.defaultNetworkName,
+				'traefik.domain': containerConf.containerName + '.' + applianceConf.applianceFQDN,
+				'traefik.backend': containerConf.containerName,
 				'traefik.frontend.entryPoints': 'http,https',
-				'traefik.frontend.rule': 'Host:' + containerName + '.' + CAFconf.applianceFQDN,
+				'traefik.frontend.rule': 'Host:' + containerConf.containerName + '.' + applianceConf.applianceFQDN,
 			}
 		},
 	},
@@ -37,7 +35,7 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 	networks: {
 		network: {
 			external: {
-				name: defaultNetworkName
+				name: containerConf.defaultNetworkName
 			},
 		},
 	},
@@ -45,7 +43,7 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 	volumes: {
 		volume: {
 			external: {
-				name: containerName
+				name: containerConf.containerName
 			},
 		},
 	},

@@ -1,7 +1,5 @@
-//local appliance = import "../appliance.libsonnet";
-local containerName = std.extVar('containerName');
-local defaultNetworkName = std.extVar('defaultNetworkName');
-local CAFconf = import "../CAF.conf.jsonnet";
+local applianceConf = import "../CAF.conf.jsonnet";
+local containerConf = import "container.conf.json";
 
 [{
 	version: '3',
@@ -9,19 +7,19 @@ local CAFconf = import "../CAF.conf.jsonnet";
 	services: {
 		container: {
 			build: '.',
-			container_name: containerName,
-			image: containerName + ':latest',
+			container_name: containerConf.containerName,
+			image: containerConf.containerName + ':latest',
 			restart: 'always',
 			ports: ['4260:4260'],
 			networks: ['network'],
 			volumes: ['volume:/root/.databaseflow'],
 			labels: {
 				'traefik.enable': 'true',
-				'traefik.docker.network': defaultNetworkName,
-				'traefik.domain': containerName + '.' + CAFconf.applianceFQDN,
-				'traefik.backend': containerName,
+				'traefik.docker.network': containerConf.defaultNetworkName,
+				'traefik.domain': containerConf.containerName + '.' + applianceConf.applianceFQDN,
+				'traefik.backend': containerConf.containerName,
 				'traefik.frontend.entryPoints': 'http,https',
-				'traefik.frontend.rule': 'Host:' + containerName + '.' + CAFconf.applianceFQDN,
+				'traefik.frontend.rule': 'Host:' + containerConf.containerName + '.' + applianceConf.applianceFQDN,
 			}
 		}
 	},
@@ -29,7 +27,7 @@ local CAFconf = import "../CAF.conf.jsonnet";
 	networks: {
 		network: {
 			external: {
-				name: defaultNetworkName
+				name: containerConf.defaultNetworkName
 			},
 		},
 	},
@@ -37,7 +35,7 @@ local CAFconf = import "../CAF.conf.jsonnet";
 	volumes: {
 		volume: {
 			external: {
-				name: containerName
+				name: containerConf.containerName
 			},
 		},
 	},
