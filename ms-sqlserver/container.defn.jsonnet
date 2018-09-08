@@ -20,7 +20,7 @@ local containerConf = import "container.conf.json";
 		networks: {
 			network: {
 				external: {
-					name: containerConf.defaultNetworkName
+					name: applianceConf.defaultDockerNetworkName
 				},
 			},
 		},

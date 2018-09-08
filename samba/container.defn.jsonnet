@@ -12,9 +12,9 @@ local containerConf = import "container.conf.json";
 				restart: 'always',
 				ports: ['139:139', '445:445'],
 				networks: ['network'],
-				command: '-s ' + '"' + containerConf.currentUserName + '_Home;/'+ containerConf.currentUserName +'_Home;yes;no;yes;admin;admin"',
+				command: '-s ' + '"' + containerConf.currentUser.name + '_Home;/'+ containerConf.currentUser.name +'_Home;yes;no;yes;admin;admin"',
 				volumes: [
-					containerConf.currentUserHome + ':/'+ containerConf.currentUserName +'_Home',
+					containerConf.currentUser.home + ':/'+ containerConf.currentUser.name +'_Home',
 				],
 				environment: [
 					'USERID=1000',
@@ -30,7 +30,7 @@ local containerConf = import "container.conf.json";
 		networks: {
 			network: {
 				external: {
-					name: containerConf.defaultNetworkName
+					name: applianceConf.defaultDockerNetworkName
 				},
 			},
 		},

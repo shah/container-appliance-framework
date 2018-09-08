@@ -21,7 +21,7 @@ local containerConf = import "container.conf.json";
 				],
 				labels: {
 					'traefik.enable': 'true',
-					'traefik.docker.network': containerConf.defaultNetworkName,
+					'traefik.docker.network': applianceConf.defaultDockerNetworkName,
 					'traefik.domain': containerConf.containerName + '.' + applianceConf.applianceFQDN,
 					'traefik.backend': containerConf.containerName,
 					'traefik.frontend.entryPoints': 'http,https',
@@ -33,7 +33,7 @@ local containerConf = import "container.conf.json";
 		networks: {
 			network: {
 				external: {
-					name: containerConf.defaultNetworkName
+					name: applianceConf.defaultDockerNetworkName
 				},
 			},
 		},

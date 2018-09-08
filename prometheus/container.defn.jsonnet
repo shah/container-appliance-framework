@@ -24,7 +24,7 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 				user: "root", // SNS: by default Prometheus container runs as nobody:nogroup but volumes are owned by root so we switch
 				labels: {
 					'traefik.enable': 'true',
-					'traefik.docker.network': containerConf.defaultNetworkName,
+					'traefik.docker.network': applianceConf.defaultDockerNetworkName,
 					'traefik.domain': containerConf.containerName + '.' + applianceConf.applianceFQDN,
 					'traefik.backend': containerConf.containerName,
 					'traefik.frontend.entryPoints': 'http,https',
@@ -36,7 +36,7 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 		networks: {
 			network: {
 				external: {
-					name: containerConf.defaultNetworkName
+					name: applianceConf.defaultDockerNetworkName
 				},
 			},
 		},
