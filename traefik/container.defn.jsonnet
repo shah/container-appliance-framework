@@ -2,10 +2,7 @@ local manifestToml = import "manifestToml.libsonnet";
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
 
-local application = 'my-app';
-local module = 'uwsgi_module';
-local dir = '/var/www';
-local permission = 644;
+local traefikLogsDirInContainer = "/var/log/traefik";
 
 {
 	"docker-compose.yml" : std.manifestYamlDoc({
@@ -22,7 +19,7 @@ local permission = 644;
 					'/var/run/docker.sock:/var/run/docker.sock',
 					containerConf.containerDefnHome + '/traefik.toml:/traefik.toml',
 					containerConf.containerDefnHome + '/acme.json:/acme.json',
-					'logs:/var/log/traefik',
+					'logs:' + traefikLogsDirInContainer,
 				],
 			}
 		},
@@ -43,48 +40,48 @@ local permission = 644;
 	}),
 
  	"traefik.toml" : manifestToml({
-		"debug": false,
-		"logLevel": "INFO",
-		"defaultEntryPoints": [
+		debug: false,
+		logLevel: "INFO",
+		defaultEntryPoints: [
 			"https",
 			"http"
 		],
-		"entryPoints": {
-			"http": {
-				"address": ":80",
-				"redirect": {
-					"entryPoint": "https"
+		entryPoints: {
+			http: {
+				address: ":80",
+				redirect: {
+					entryPoint: "https"
 				}
 			},
-			"https": {
-			"address": ":443",
-			"tls": {}
+			https: {
+			address: ":443",
+			tls: {}
 			}
 		},
-		"retry": {},
-		"docker": {
-			"endpoint": "unix:///var/run/docker.sock",
-			"domain": "appliance.local",
-			"watch": true,
-			"exposedByDefault": false
+		retry: {},
+		docker: {
+			endpoint: "unix:///var/run/docker.sock",
+			domain: "appliance.local",
+			watch: true,
+			exposedByDefault: false
 		},
-		"acme": {
-			"email": "admin@appliance.local",
-			"storage": "acme.json",
-			"entryPoint": "https",
-			"onHostRule": true,
-			"httpChallenge": {
-				"entryPoint": "http"
+		acme: {
+			email: "admin@appliance.local",
+			storage: "acme.json",
+			entryPoint: "https",
+			onHostRule: true,
+			httpChallenge: {
+				entryPoint: "http"
 			}
 		},
-		"traefikLog": {
-			"filePath": "/var/log/traefik/service.log"
+		traefikLog: {
+			filePath: traefikLogsDirInContainer + "/service.log"
 		},
-		"accessLog": {
-			"filePath": "/var/log/traefik/access.log"
+		accessLog: {
+			filePath: traefikLogsDirInContainer + "/access.log"
 		},
-		"web": {
-			"address": ":8099"
+		web: {
+			address: ":8099"
 		}
 	}),
 }
