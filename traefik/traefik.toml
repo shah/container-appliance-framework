@@ -29,10 +29,10 @@ onHostRule = true
   entryPoint = "http"
 
 [traefikLog]
-filePath = "/var/log/traefik-service.log"
+filePath = "/var/log/traefik/service.log"
 
 [accessLog]
-filePath = "/var/log/traefik-access.log"
+filePath = "/var/log/traefik/access.log"
 
 [web]
 address = ":8099"

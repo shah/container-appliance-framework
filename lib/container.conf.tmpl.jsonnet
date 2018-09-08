@@ -9,7 +9,7 @@
 	DOCKER_HOST_IP_ADDR : std.extVar('DOCKER_HOST_IP_ADDR'),
 
 	containerName : std.extVar('containerName'),
-	containerRootPath : std.extVar('containerRootPath'),
+	containerDefnHome : std.extVar('containerDefnHome'),
 
 	defaultNetworkName : std.extVar('defaultNetworkName'),
 

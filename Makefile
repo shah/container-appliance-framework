@@ -4,6 +4,7 @@ CWD := `pwd`
 ZSH_THEME := 'appliance'
 
 JSONNET_INSTALLED := $(shell command -v jsonnet 2> /dev/null)
+JQ_INSTALLED := $(shell command -v jq 2> /dev/null)
 DOCKER_INSTALLED := $(shell command -v docker 2> /dev/null)
 USER_IN_DOCKER_GROUP := $(shell groups $$USER | grep '\bdocker\b')
 DOCKER_COMPOSE_INSTALLED := $(shell command -v docker-compose 2> /dev/null)
@@ -85,7 +86,7 @@ setup-docker-networks:
 	docker network create $(DOCKER_NETWORK_DEFAULT)
 
 ## See if all developer dependencies are installed
-check-dependencies: check-jsonnet check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop check-prometheus-node-exporter
+check-dependencies: check-jsonnet check-jq check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop check-prometheus-node-exporter
 	printf "[*] "
 	make -v | head -1
 	echo "[*] Shell: $$SHELL"
@@ -100,6 +101,14 @@ ifndef JSONNET_INSTALLED
 else
 	printf "[*] "
 	jsonnet --version
+endif
+
+check-jq:
+ifndef JQ_INSTALLED
+	echo "[ ] Did not find jq, install using sudo apt-get install jq"
+else
+	printf "[*] "
+	jq --version
 endif
 
 check-user-in-docker-group:
