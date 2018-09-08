@@ -54,7 +54,7 @@ generate-container-conf:
 			--output-file $(CONTAINER_CONF_GENERATED_FILE) \
 			$(CONTAINER_CONF_JSONNET_TMPL)
 	echo "Generated container definitions from $(CONTAINER_DEFN_JSONNET) (stored in $(CONTAINER_DEFN_JSONNET_GENERATED_FILES_LIST)):"
-	jsonnet --jpath $(CAF_HOME) --jpath $(CAF_LIB) --jpath $(CONTAINER_DEFN_HOME) --multi . $(CONTAINER_DEFN_JSONNET) > $(CONTAINER_DEFN_JSONNET_GENERATED_FILES_LIST)
+	jsonnet -S --jpath $(CAF_HOME) --jpath $(CAF_LIB) --jpath $(CONTAINER_DEFN_HOME) --multi . $(CONTAINER_DEFN_JSONNET) > $(CONTAINER_DEFN_JSONNET_GENERATED_FILES_LIST)
 	cat $(CONTAINER_DEFN_JSONNET_GENERATED_FILES_LIST)  | sed 's/^\.\//  > /'
 	echo "Created .gitignore to prevent tracking of generated files"
 	echo $(CONTAINER_CONF_GENERATED_FILE) > .gitignore

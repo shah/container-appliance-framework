@@ -2,7 +2,7 @@ local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
 
 {
-	"docker-compose.yml" : {
+	"docker-compose.yml" : std.manifestYamlDoc({
 		version: '3.4',
 
 		services: {
@@ -38,5 +38,5 @@ local containerConf = import "container.conf.json";
 				name: containerConf.containerName
 			},
 		},
-	}
+	})
 }

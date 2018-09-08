@@ -1,9 +1,14 @@
-//local appliance = import "../appliance.libsonnet";
-local applianceConf = import "../CAF.conf.jsonnet";
+local manifestToml = import "manifestToml.libsonnet";
+local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
 
+local application = 'my-app';
+local module = 'uwsgi_module';
+local dir = '/var/www';
+local permission = 644;
+
 {
-	"docker-compose.yml" : {
+	"docker-compose.yml" : std.manifestYamlDoc({
 		version: '3.4',
 
 		services: {
@@ -35,5 +40,51 @@ local containerConf = import "container.conf.json";
 				name: containerConf.containerName + "_logs"
 			},
 		},
-	}
+	}),
+
+ 	"traefik.toml" : manifestToml({
+		"debug": false,
+		"logLevel": "INFO",
+		"defaultEntryPoints": [
+			"https",
+			"http"
+		],
+		"entryPoints": {
+			"http": {
+				"address": ":80",
+				"redirect": {
+					"entryPoint": "https"
+				}
+			},
+			"https": {
+			"address": ":443",
+			"tls": {}
+			}
+		},
+		"retry": {},
+		"docker": {
+			"endpoint": "unix:///var/run/docker.sock",
+			"domain": "appliance.local",
+			"watch": true,
+			"exposedByDefault": false
+		},
+		"acme": {
+			"email": "admin@appliance.local",
+			"storage": "acme.json",
+			"entryPoint": "https",
+			"onHostRule": true,
+			"httpChallenge": {
+				"entryPoint": "http"
+			}
+		},
+		"traefikLog": {
+			"filePath": "/var/log/traefik/service.log"
+		},
+		"accessLog": {
+			"filePath": "/var/log/traefik/access.log"
+		},
+		"web": {
+			"address": ":8099"
+		}
+	}),
 }

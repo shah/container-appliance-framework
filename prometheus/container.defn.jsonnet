@@ -6,7 +6,7 @@ local promConfigFileInContainer = '/etc/prometheus/prometheus.yml';
 local tsdbStoragePathInContainer = '/var/prometheus/data';
 
 {
-	"docker-compose.yml" : {
+	"docker-compose.yml" : std.manifestYamlDoc({
 		version: '3.4',
 
 		services: {
@@ -46,5 +46,5 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 				name: containerConf.containerName
 			},
 		},
-	}
+	})
 }
