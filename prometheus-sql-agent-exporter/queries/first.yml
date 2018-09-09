@@ -1,0 +1,5 @@
+- total_records_in_table:
+    data-source: ms-sqlserver
+    sql: >
+        select count(*) from HR
+    interval: 15s
