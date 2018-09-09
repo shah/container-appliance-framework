@@ -13,6 +13,7 @@ CURRENT_DIR_NAME := $(shell basename `pwd`)
 
 CONTAINER_NAME := $(CURRENT_DIR_NAME)
 CONTAINER_DEFN_HOME := $(CURRENT_DIR_PATH)
+CONTAINER_DOCKERFILE := Dockerfile
 
 CONTAINER_IS_RUNNING := $(shell docker ps --filter "name=$(CONTAINER_NAME)" --filter "status=running" --quiet)
 
@@ -82,10 +83,17 @@ ifneq ("$(wildcard $(CUSTOM_POST_START_SCRIPT_NAME))","")
 	$(CUSTOM_POST_START_SCRIPT_NAME) $(CONTAINER_NAME)
 endif
 
+shell:
+	docker run -it --entrypoint="/bin/sh" $(CONTAINER_NAME) 
+
+bash:
+	docker run -it --entrypoint="/bin/bash" $(CONTAINER_NAME)
+
 ## If the container is running, inspect its settings
 inspect:
 ifdef CONTAINER_IS_RUNNING
 	docker ps -a --filter "name=$(CONTAINER_NAME)" --format "table {{.ID}} {{.Names}}\t{{.Status}}\t{{.Ports}}\\t{{.Networks}}"
+	docker images $(CONTAINER_NAME)
 	printf "Volumes: "
 	docker inspect -f '{{ json .Mounts }}' $(CONTAINER_NAME) | jq 
 else
@@ -124,6 +132,15 @@ kill:
 
 ## Stop the container and clean up generated files
 clean: kill clean-generated-container-conf
+
+ifneq ("$(wildcard $(CONTAINER_DOCKERFILE))","")
+## Build the container using Dockerfile in this directory
+build:
+	docker images $(CONTAINER_NAME)
+	echo "Removing image $(CONTAINER_NAME)"
+	docker rmi --force $(CONTAINER_NAME)
+	docker build --force-rm --no-cache --tag $(CONTAINER_NAME) .
+endif
 
 TARGET_MAX_CHAR_NUM=10
 # All targets should have a ## Help text above the target and they'll be automatically collected
