@@ -164,6 +164,10 @@ else
 	prometheus-node-exporter --version 2>&1 | head -n 1
 endif
 
+## Remove all containers that have exited
+remove-exited-containers:
+	docker rm $(docker ps -aq -f status=exited)
+
 TARGET_MAX_CHAR_NUM=20
 ## All targets should have a ## Help text above the target and they'll be automatically collected
 ## Show help, using auto generator from https://gist.github.com/prwhite/8168133
