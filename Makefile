@@ -165,8 +165,12 @@ else
 endif
 
 ## Remove all containers that have exited
-remove-exited-containers:
-	docker rm $(docker ps -aq -f status=exited)
+clean-exited-containers:
+	docker ps -aq --no-trunc -f status=exited | xargs docker rm
+
+## Remove all dangling or untagged container images
+clean-dangling-untagged-container-images:
+	docker images -q --filter dangling=true | xargs docker rmi
 
 TARGET_MAX_CHAR_NUM=20
 ## All targets should have a ## Help text above the target and they'll be automatically collected
