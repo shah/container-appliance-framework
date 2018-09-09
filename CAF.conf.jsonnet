@@ -12,5 +12,8 @@
     prometheusSqlAgentExporter : {
       webServicePort : 7878,
     },
+    mtailExporter : {
+      webServicePort : 3903,
+    },
   },
 }
