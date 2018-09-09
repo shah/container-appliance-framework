@@ -81,7 +81,14 @@ local traefikLogsDirInContainer = "/var/log/traefik";
 			filePath: traefikLogsDirInContainer + "/access.log"
 		},
 		web: {
-			address: ":8099"
+			address: ":8099",
+			// auth : {
+			// 	basic : {
+			// 		users : [
+			// 			"admin:generate with htpasswd -nb secret",
+			// 		],
+			// 	},
+			// },
 		}
 	}),
 }
