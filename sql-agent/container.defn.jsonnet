@@ -10,7 +10,7 @@ local containerConf = import "container.conf.json";
 				container_name: containerConf.containerName,
 				image: 'dbhi/sql-agent',
 				restart: 'always',
-				ports: ['5000:5000'],
+				ports: [applianceConf.sharedContainers.sqlAgent.webServicePort + ':5000'],
 				networks: ['network'],
 				labels: {
 					'traefik.enable': 'true',
