@@ -115,11 +115,11 @@ else
 endif
 
 ## Stop the container but retain volumes and generated files
-stop: configure
+stop: 
 	docker-compose down
 
 ## Stop the container and delete associated volumes
-kill: configure
+kill: 
 	docker-compose down --volumes
 
 ## Stop the container and clean up generated files
