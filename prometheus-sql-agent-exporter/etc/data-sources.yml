@@ -1,0 +1,15 @@
+defaults: 
+  data-source: ms-sqlserver
+  query-interval: 1m
+  query-timeout: 15s
+  query-value-on-error: -1
+
+data-sources: 
+  ms-sqlserver: 
+    driver: mssql
+    properties: 
+      database: cprsql
+      host: 192.168.1.206
+      password: Admin+001
+      port: 1433
+      user: SA
