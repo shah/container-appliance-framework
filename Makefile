@@ -160,7 +160,7 @@ endif
 
 check-prometheus-node-exporter: setup-ubuntu-repositories
 ifndef PROM_NODE_EXPORTER_INSTALLED
-	printf "[ ] Node Exporter not installed, run sudo apt-get install prometheus-node-exporter"
+	echo "[ ] Node Exporter not installed, run sudo apt-get install prometheus-node-exporter"
 else
 	printf "[*] "
 	prometheus-node-exporter --version 2>&1 | head -n 1
