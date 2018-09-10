@@ -51,8 +51,9 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 
 	"prometheus.yml" : std.manifestYamlDoc({
 		global: {
-			scrape_interval: "15s",
-			evaluation_interval: "15s",
+			scrape_interval: "1m",
+			scrape_timeout: "10s",
+			evaluation_interval: "1m",
 			external_labels: {
 				monitor: "appliance"
 			}
@@ -74,7 +75,7 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 			// This requires prometheus-node-exporter package to be installed in Docker host
 			{
 				job_name: "sql-agent",
-				scrape_interval: "15s",
+				scrape_interval: "1m", // watch this carefully and make sure sql-agent exporter doesn't encounter jitter
 				static_configs: [ { targets: [containerConf.DOCKER_HOST_IP_ADDR + ":" + applianceConf.sharedContainers.prometheusSqlAgentExporter.webServicePort] } ]
 			},
 			// TODO: figure out why docker metrics exporter is not working and enable this
@@ -82,7 +83,28 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 			// 	job_name: "docker",
 			// 	scrape_interval: "15s",
 			// 	static_configs: [ {	targets: [ containerConf.DOCKER_HOST_IP_ADDR + ":9323"] } ]
-			// }
+			// },
+			// TODO: figure out how to add container tags and auto-discovery of metrics sources
+			//       using file_sd_config instead of static_configs
+			// {
+			// 	job_name: "containers",
+			// 	honor_labels: true,
+			// 	file_sd_configs: [
+			// 		{
+			// 			files: [
+			// 				"foo/*.slow.json",
+			// 				"foo/*.slow.yml",
+			// 				"single/file.yml"
+			// 			],
+			// 			refresh_interval: "10m"
+			// 		},
+			// 		{
+			// 			files: [
+			// 				"bar/*.yaml"
+			// 			]
+			// 		}
+			// 	],
+			// },
 		]
 	})
 }
