@@ -15,8 +15,13 @@ PROM_NODE_EXPORTER_INSTALLED := $(shell command -v prometheus-node-exporter 2> /
 
 default: help
 
+## Add Ubuntu repos main and university in case they're not already enabled
+setup-ubuntu-repositories:
+	sudo add-apt-repository main
+	sudo add-apt-repository universe
+
 ## Switch to ZSH
-switch-to-zsh:
+switch-to-zsh: setup-ubuntu-repositories
 	sudo apt-get install zsh
 	chsh -s $$(which zsh)
 	echo "Your shell has been switched to ZSH, please exit the terminal and log back in."
@@ -55,7 +60,7 @@ setup-git: setup-git-credentials-cache setup-git-aliases
 
 ONESHELL:
 ## Setup docker from Ubuntu repo
-setup-docker:
+setup-docker: setup-ubuntu-repositories
 ifndef DOCKER_INSTALLED
 	echo "Using instructions from https://docs.docker.com/install/linux/docker-ce/ubuntu/"
 	sudo apt-get update
@@ -86,7 +91,7 @@ setup-docker-networks:
 	docker network create $(DOCKER_NETWORK_DEFAULT)
 
 ## See if all developer dependencies are installed
-check-dependencies: check-jsonnet check-jq check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop check-prometheus-node-exporter
+check-dependencies: setup-ubuntu-repositories check-jsonnet check-jq check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop check-prometheus-node-exporter
 	printf "[*] "
 	make -v | head -1
 	echo "[*] Shell: $$SHELL"
@@ -103,7 +108,7 @@ else
 	jsonnet --version
 endif
 
-check-jq:
+check-jq: setup-ubuntu-repositories
 ifndef JQ_INSTALLED
 	echo "[ ] Did not find jq, install using sudo apt-get install jq"
 else
@@ -153,7 +158,7 @@ else
 	ctop -v
 endif
 
-check-prometheus-node-exporter:
+check-prometheus-node-exporter: setup-ubuntu-repositories
 ifndef PROM_NODE_EXPORTER_INSTALLED
 	echo "Did not find promethe, creating link to shell/ctop version"
 	sudo ln -s $(CWD)/shell/ctop-v0.7.1 /usr/local/bin/ctop
