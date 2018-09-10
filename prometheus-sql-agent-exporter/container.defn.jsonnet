@@ -16,8 +16,8 @@ local webServicePortInContainer = webServicePort;
 				ports: [webServicePort + ':' + webServicePortInContainer],
 				networks: ['network'],
 				volumes: [
-					containerConf.containerDefnHome + '/etc/data-sources.yml:/data-sources.yml',
-					containerConf.containerDefnHome + '/etc/queries:/queries',
+					containerConf.containerRuntimeConfigHome + '/data-sources.yml:/data-sources.yml',
+					containerConf.containerRuntimeConfigHome + '/queries:/queries',
 				],
 				// TODO: replace the -service config with a CAF.libsonnet function call so multiple containers can share
 				command: "-port "+ webServicePortInContainer + " " +
