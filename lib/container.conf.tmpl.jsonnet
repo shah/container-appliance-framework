@@ -8,6 +8,7 @@
 
 	containerName : std.extVar('containerName'),
 	containerDefnHome : std.extVar('containerDefnHome'),
+	containerRuntimeConfigHome : $.containerDefnHome + "/etc",
 
 	currentUser : {
 		name : std.extVar('currentUserName'),

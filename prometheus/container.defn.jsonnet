@@ -49,6 +49,19 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 		},
 	}),
 
+	// this file will be symlink'd from ../grafana/etc/provisioning/datasources/prometheus.yml
+	"grafana-provisioning-datasource.yml" : std.manifestYamlDoc({
+		apiVersion: 1,
+		datasources: [
+			{
+				name: "Prometheus",
+				type: "prometheus",
+				access: "proxy",
+				url: 'http://' + containerConf.DOCKER_HOST_IP_ADDR + ":" + webServicePort
+			},
+		],
+	}),
+
 	"prometheus.yml" : std.manifestYamlDoc({
 		global: {
 			scrape_interval: "1m",
@@ -78,12 +91,11 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 				scrape_interval: "1m", // watch this carefully and make sure sql-agent exporter doesn't encounter jitter
 				static_configs: [ { targets: [containerConf.DOCKER_HOST_IP_ADDR + ":" + applianceConf.sharedContainers.prometheusSqlAgentExporter.webServicePort] } ]
 			},
-			// TODO: figure out why docker metrics exporter is not working and enable this
-			// {
-			// 	job_name: "docker",
-			// 	scrape_interval: "15s",
-			// 	static_configs: [ {	targets: [ containerConf.DOCKER_HOST_IP_ADDR + ":9323"] } ]
-			// },
+			{
+				job_name: "cadvisor",
+				scrape_interval: "15s",
+				static_configs: [ {	targets: [ containerConf.DOCKER_HOST_IP_ADDR + ":8080"] } ]
+			},
 			// TODO: figure out how to add container tags and auto-discovery of metrics sources
 			//       using file_sd_config instead of static_configs
 			// {

@@ -1,4 +1,5 @@
 container.conf.json
 .container.defn.jsonnet_generated
 docker-compose.yml
+grafana-provisioning-datasource.yml
 prometheus.yml
