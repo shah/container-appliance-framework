@@ -16,7 +16,7 @@ DAVFS2_CONF_FILE=/etc/davfs2/davfs2.conf
 DAVFS2_SECRETS_FILE=/etc/davfs2/secrets
 if [ ! -f $DAVFS2_SECRETS_FILE ]; then
     echo "$DAVFS2_SECRETS_FILE does not exist, put your secrets in there in the following format:"
-    echo "<URL> <username> <password>"
+    echo "    <URL> <username> <password>"
     exit 1
 fi
 
@@ -48,7 +48,7 @@ fi
 
 if [ ! -d $LOCAL_MOUNT_PATH ]; then
     echo "Directory $LOCAL_MOUNT_PATH does not exist, please create it."
-    echo "   mkdir -p $LOCAL_MOUNT_PATH"
+    echo "   sudo mkdir -p $LOCAL_MOUNT_PATH"
     exit 1
 else
     echo "Mount path $LOCAL_MOUNT_PATH exists."
@@ -69,32 +69,35 @@ WEBDAV_URL="https://$WEBDAV_SERVER_FQDN$WBEDAV_URL_PATH"
 #    echo "trust_server_cert ${WEBDAV_SERVER_FQDN}" | sudo tee -a $DAVFS2_CONF_FILE
 #fi
 
-if grep -Fq "$WEBDAV_URL" $DAVFS2_SECRETS_FILE
-then
-    echo "Found $WEBDAV_URL in $DAVFS2_SECRETS_FILE"
-else
+WEBDAV_URL_USERNAME_PASSWD=$(grep -F "$WEBDAV_URL" $DAVFS2_SECRETS_FILE)
+if [ -z "$WEBDAV_URL_USERNAME_PASSWD" ]; then
     echo "Unable to find '$WEBDAV_URL' in $DAVFS2_SECRETS_FILE."
     echo "Please sudo vi $DAVFS2_SECRETS_FILE and add it there."
     exit 100
+else
+    echo "Found $WEBDAV_URL in $DAVFS2_SECRETS_FILE"
+    IFS=' ' read -r -a secrets <<< "$WEBDAV_URL_USERNAME_PASSWD"
+    testUrlResult=$(curl -L -w %{http_code} -X PROPFIND -H "Depth: 1" --anyauth --user "${secrets[1]}:${secrets[2]}" -s --output /dev/null $WEBDAV_URL)
+    echo "Result of CURL on '$WEBDAV_URL' is: '$testUrlResult'."
+    if [ "$testUrlResult" != "207" ]; then
+        echo "The status should be 207, perhaps the WEBDAV_URL is not valid?"
+        exit 101
+    fi
 fi
+
+echo "Deleting $WEBDAV_URL from $FSTAB"
+grep -vwE "$WEBDAV_URL" $FSTAB > $FSTAB.new
+cp $FSTAB $FSTAB.orig
+mv $FSTAB.new $FSTAB
+diff $FSTAB.orig $FSTAB
+
+echo "Adding $WEBDAV_URL to $FSTAB, it should auto-mount on reboot"
+echo "${WEBDAV_URL} $LOCAL_MOUNT_PATH davfs _netdev,x-systemd.automount 0 0" | \
+    sudo tee -a $FSTAB
+ls -al $FSTAB
 
 echo "Mounting $WEBDAV_URL to $LOCAL_MOUNT_PATH"
 mount -t davfs ${WEBDAV_SERVER_URL} $LOCAL_MOUNT_PATH
 
-if grep -Fq "$WEBDAV_URL" $FSTAB
-then
-    echo "Found $WEBDAV_URL in $FSTAB, it should auto-mount on reboot"
-else
-    echo "Adding $WEBDAV_URL to $FSTAB, it should auto-mount on reboot"
-    echo "${WEBDAV_URL} $LOCAL_MOUNT_PATH davfs _netdev,x-systemd.automount 0 0" | \
-        sudo tee -a $FSTAB
-    ls -al $FSTAB
-fi
-
-#result=$(curl -w %{http_code} -s --output /dev/null $WEBDAV_URL)
-#echo "Result of CURL on '$WEBDAV_URL' is: '$result'."
-#if [ ! -f $SRC_FILE ]; then
-#    echo "Source file $SRC_FILE not found."
-#    exit 2
-#fi
+# sudo chmod +x setup-davfs2.sh && sudo ./setup-davfs2.sh sync.citushealth.com /account/CHA_CHMDF01P /mnt/davfs/CHA_CHMDF01P
 
