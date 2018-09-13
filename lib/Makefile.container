@@ -19,6 +19,7 @@ CONTAINER_IS_RUNNING := $(shell docker ps --filter "name=$(CONTAINER_NAME)" --fi
 
 CAF_HOME = $(shell realpath ../)
 CAF_LIB = $(CAF_HOME)/lib
+CAF_SECRETS_HOME = $(CAF_HOME)/.secrets
 
 # This is the Makefile environment's JSonnet template file which is generated
 # each time the make command is run. It's basically a convenience wrapper that
@@ -37,11 +38,14 @@ CUSTOM_POST_CONFIGURE_SCRIPT_NAME := ./after_configure.make-plugin.sh
 CUSTOM_POST_START_SCRIPT_NAME := ./after_start.make-plugin.sh
 CUSTOM_INCLUDE_FILE := ./container.make.inc
 
+# All the different locations we'll look for *.jsonnet files (rightmost path wins precedence)
+JSONNET_JPATH := --jpath $(CAF_HOME) --jpath $(CAF_LIB) --jpath $(CAF_SECRETS_HOME) --jpath $(CONTAINER_DEFN_HOME)
+
 default: inspect
 
 generate-container-conf:
 	echo "Generated $(CONTAINER_CONF_GENERATED_FILE) from $(CONTAINER_CONF_JSONNET_TMPL)"
-	jsonnet --jpath $(CAF_HOME) --jpath $(CAF_LIB) --jpath $(CONTAINER_DEFN_HOME) \
+	jsonnet $(JSONNET_JPATH) \
 			--ext-str GENERATED_ON="`date`" \
 			--ext-str DOCKER_HOST_IP_ADDR=$(DOCKER_HOST_IP_ADDR) \
 			--ext-str CAF_HOME=$(CAF_HOME) \
@@ -55,7 +59,7 @@ generate-container-conf:
 			--output-file $(CONTAINER_CONF_GENERATED_FILE) \
 			$(CONTAINER_CONF_JSONNET_TMPL)
 	echo "Generated container definitions from $(CONTAINER_DEFN_JSONNET) (stored in $(CONTAINER_DEFN_JSONNET_GENERATED_FILES_LIST)):"
-	jsonnet -S --jpath $(CAF_HOME) --jpath $(CAF_LIB) --jpath $(CONTAINER_DEFN_HOME) --multi . $(CONTAINER_DEFN_JSONNET) > $(CONTAINER_DEFN_JSONNET_GENERATED_FILES_LIST)
+	jsonnet -S $(JSONNET_JPATH) --multi . $(CONTAINER_DEFN_JSONNET) > $(CONTAINER_DEFN_JSONNET_GENERATED_FILES_LIST)
 	cat $(CONTAINER_DEFN_JSONNET_GENERATED_FILES_LIST)  | sed 's/^\.\//  > /'
 	echo "Created .gitignore to prevent tracking of generated files"
 	echo $(CONTAINER_CONF_GENERATED_FILE) > .gitignore

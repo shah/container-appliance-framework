@@ -16,7 +16,7 @@ PROMETHEUS_DATASRC_CONF := $(PROMETHEUS_CONTAINER_HOME)/grafana-provisioning-dat
 
 configure-prometheus-datasource: clean-prometheus-datasource
 ifneq ("$(wildcard $(PROMETHEUS_DATASRC_CONF))","")
-	echo "Copying $(GRAFANA_DATASOURCES_HOME)/prometheus.yml to $(PROMETHEUS_DATASRC_CONF)"
+	echo "Copying $(PROMETHEUS_DATASRC_CONF) to $(GRAFANA_DATASOURCES_HOME)/prometheus.yml"
 	mkdir -p $(GRAFANA_DATASOURCES_HOME)
 	cp $(PROMETHEUS_DATASRC_CONF) $(GRAFANA_DATASOURCES_HOME)/prometheus.yml
 	ls -al $(GRAFANA_DATASOURCES_HOME)

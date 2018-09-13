@@ -85,19 +85,31 @@ else
     fi
 fi
 
-echo "Deleting $WEBDAV_URL from $FSTAB"
+FSTAB_BACKUP=$FSTAB.orig.`date "+%Y-%m-%d.%H-%M-%S"`
+echo "Deleting $WEBDAV_URL from $FSTAB, with backup at $FSTAB_BACKUP"
 grep -vwE "$WEBDAV_URL" $FSTAB > $FSTAB.new
-cp $FSTAB $FSTAB.orig
+cp $FSTAB $FSTAB_BACKUP
 mv $FSTAB.new $FSTAB
-diff $FSTAB.orig $FSTAB
 
 echo "Adding $WEBDAV_URL to $FSTAB, it should auto-mount on reboot"
 echo "${WEBDAV_URL} $LOCAL_MOUNT_PATH davfs _netdev,x-systemd.automount 0 0" | \
     sudo tee -a $FSTAB
 ls -al $FSTAB
 
+if mountpoint $LOCAL_MOUNT_PATH
+then
+    echo "Flushing the cache and unmounting $LOCAL_MOUNT_PATH"
+    umount $LOCAL_MOUNT_PATH
+else
+    echo "$LOCAL_MOUNT_PATH is not mounted, no unmount required."
+fi
+
 echo "Mounting $WEBDAV_URL to $LOCAL_MOUNT_PATH"
 mount -t davfs ${WEBDAV_SERVER_URL} $LOCAL_MOUNT_PATH
+
+echo ""
+echo "ls -al $LOCAL_MOUNT_PATH"
+ls -al $LOCAL_MOUNT_PATH
 
 # sudo chmod +x setup-davfs2.sh && sudo ./setup-davfs2.sh sync.citushealth.com /account/CHA_CHMDF01P /mnt/davfs/CHA_CHMDF01P
 

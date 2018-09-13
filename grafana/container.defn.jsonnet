@@ -1,5 +1,6 @@
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
+local containerSecrets = import "grafana.secrets.jsonnet";
 
 local webServicePort = 3000;
 local webServicePortInContainer = webServicePort;
@@ -21,8 +22,8 @@ local webServicePortInContainer = webServicePort;
 				],
 				environment: [
 					"GF_DEFAULT_INSTANCE_NAME=" + applianceConf.applianceName,
-					"GF_SECURITY_ADMIN_USER=admin",
-					"GF_SECURITY_ADMIN_PASSWORD=admin",
+					"GF_SECURITY_ADMIN_USER=" + containerSecrets.adminUser,
+					"GF_SECURITY_ADMIN_PASSWORD=" + containerSecrets.adminPassword,
 					"GF_USERS_ALLOW_SIGN_UP=false"
 				],
 				labels: {

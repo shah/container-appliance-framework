@@ -3,6 +3,10 @@ MAKEFLAGS := silent
 CWD := `pwd`
 ZSH_THEME := 'appliance'
 
+# CAF_SECRETS_HOME is where all credentials and other secrets are stored
+# If you change the variable value, edit lib/Makefile.container and .gitignore too
+CAF_SECRETS_HOME := ./.secrets
+
 JSONNET_INSTALLED := $(shell command -v jsonnet 2> /dev/null)
 JQ_INSTALLED := $(shell command -v jq 2> /dev/null)
 DOCKER_INSTALLED := $(shell command -v docker 2> /dev/null)
@@ -90,8 +94,21 @@ endif
 setup-docker-networks:
 	docker network create $(DOCKER_NETWORK_DEFAULT)
 
+restore-secrets-to-defaults:
+	rm -rf $(CAF_SECRETS_HOME)
+	cp -r $(CWD)/lib/secrets-default $(CAF_SECRETS_HOME)
+	echo "Removed $(CAF_SECRETS_HOME), copied starter from lib/secrets-default"
+
+setup-secrets:
+ifneq ("$(wildcard $(CAF_SECRETS_HOME))","")
+	echo "[*] Found secrets directory at $(CAF_SECRETS_HOME)"
+else
+	cp -r $(CWD)/lib/secrets-default $(CAF_SECRETS_HOME)
+	echo "[*] Did not find $(CAF_SECRETS_HOME) directory, copied starter from lib/secrets-default"
+endif
+
 ## See if all developer dependencies are installed
-check-dependencies: setup-ubuntu-repositories check-jsonnet check-jq check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop check-prometheus-node-exporter
+check-dependencies: setup-ubuntu-repositories check-jsonnet check-jq check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop check-prometheus-node-exporter setup-secrets
 	printf "[*] "
 	make -v | head -1
 	echo "[*] Shell: $$SHELL"
@@ -164,7 +181,6 @@ ifndef PROM_NODE_EXPORTER_INSTALLED
 else
 	printf "[*] "
 	prometheus-node-exporter --version 2>&1 | head -n 1
-	echo ""
 endif
 
 ## Remove all containers that have exited

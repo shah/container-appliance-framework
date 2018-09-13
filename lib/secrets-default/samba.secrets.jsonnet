@@ -1,0 +1,4 @@
+{
+	homeShareUserName : "admin",
+	homeSharePassword : "admin"
+}

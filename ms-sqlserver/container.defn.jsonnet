@@ -1,5 +1,6 @@
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
+local containerSecrets = import "ms-sqlserver.secrets.jsonnet";
 
 {
 	"docker-compose.yml" : std.manifestYamlDoc({
@@ -13,7 +14,7 @@ local containerConf = import "container.conf.json";
 				ports: ['1433:1433'],
 				networks: ['network'],
 				volumes: ['storage:/var/opt/mssql'],
-				environment: ['SA_PASSWORD=Admin+001', 'ACCEPT_EULA=Y']
+				environment: ['SA_PASSWORD=' + containerSecrets.SA_password, 'ACCEPT_EULA=Y']
 			}
 		},
 

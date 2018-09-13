@@ -1,5 +1,6 @@
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
+local containerSecrets = import "samba.secrets.jsonnet";
 
 {
 	"docker-compose.yml" : std.manifestYamlDoc({
@@ -12,7 +13,7 @@ local containerConf = import "container.conf.json";
 				restart: 'always',
 				ports: ['139:139', '445:445'],
 				networks: ['network'],
-				command: '-s ' + '"' + containerConf.currentUser.name + '_Home;/'+ containerConf.currentUser.name +'_Home;yes;no;yes;admin;admin"',
+				command: '-s ' + '"' + containerConf.currentUser.name + '_Home;/'+ containerConf.currentUser.name +'_Home;yes;no;yes;'+ containerSecrets.homeShareUserName +';'+ containerSecrets.homeSharePassword +'"',
 				volumes: [
 					containerConf.currentUser.home + ':/'+ containerConf.currentUser.name +'_Home',
 				],

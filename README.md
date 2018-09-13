@@ -38,3 +38,17 @@ Exit the shell, log back in. Then:
     make check-dependencies
 
 Follow instructions to install all dependencies.
+
+## Secrets Management
+
+The CAF_HOME/secrets directory is where all secrets across all containers are kept. The convention is
+to create a file called *container-name*.secrets.jsonnet and place it in the **CAF_HOME/.secrets** directory,
+which is in the jsonnet path (--jpath in CAF_HOME/lib/Makefile:configure target).
+
+The *container-name*.secrets.conf.jsonnet is then import'd by container.defn.jsonnet in a particular
+container. Because --jpath includes the CAF_HOME/.secrets directory, it will find the secrets jsonnet
+configuration files easily.
+
+NOTE: *The CAF_HOME/secrets directory is in CAF_HOME/.gitignore so it will not be tracked by Git.*
+To help get started with CAF, the CAF_HOME/Makefile copies lib/secrets-default to CAF_HOME/screts when
+the *check-dependencies* target is run.
