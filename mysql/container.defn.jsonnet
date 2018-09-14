@@ -12,9 +12,13 @@ local containerSecrets = import "mysql.secrets.jsonnet";
 				image: 'mysql/mysql-server',
 				restart: 'always',
 				ports: [containerSecrets.databasePort + ':3306'],
+				command: "mysqld --innodb-buffer-pool-size=20M",
 				networks: ['network'],
 				volumes: ['storage:/var/lib/mysql'],
-				environment: ['MYSQL_ROOT_PASSWORD=' + containerSecrets.rootPassword]
+				environment: [
+					'MYSQL_ROOT_HOST=%',  // allow root access from any host (TODO: make this secure later)
+					'MYSQL_ROOT_PASSWORD=' + containerSecrets.rootPassword
+				]
 			}
 		},
 
