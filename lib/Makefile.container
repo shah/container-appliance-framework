@@ -139,7 +139,7 @@ clean: kill clean-generated-container-conf
 
 ifneq ("$(wildcard $(CONTAINER_DOCKERFILE))","")
 ## Build the container using Dockerfile in this directory
-build:
+build: configure
 	docker images $(CONTAINER_NAME)
 	echo "Removing image $(CONTAINER_NAME)"
 	docker rmi --force $(CONTAINER_NAME)
