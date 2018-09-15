@@ -1,4 +1,8 @@
 container.conf.json
 .container.defn.jsonnet_generated
+after_configure.make-plugin.sh
 docker-compose.yml
-setup-mysql-db.sql
+docker-entrypoint.sh
+etc/init.d/setup-mysql-db.sh
+etc/init.d/setup-mysql-db.sql
+etc/mirth.properties
