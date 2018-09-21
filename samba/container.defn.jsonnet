@@ -24,11 +24,11 @@ local command(cmd, params, repl) = [cmd, params % repl];
 				volumes:
 					["%(sharePathInHost)s:%(sharePathInContainer)s" % x for x in sambaConf.sambaShares],
 				environment: [
-					'USERID=1000',
-					'GROUPID=1000',
-					'TZ=EST5EDT',
-					'NMBD=True',
-					'RECYCLE=False',
+					'USERID=' + sambaConf.sambaSetup.userId,
+					'GROUPID=' + sambaConf.sambaSetup.groupId,
+					'TZ=' + sambaConf.sambaSetup.timeZone,
+					'NMBD=' + sambaConf.sambaSetup.serveNetBIOS,
+					'RECYCLE=' + sambaConf.sambaSetup.recycle,
 				],
 			}
 		},
@@ -40,5 +40,7 @@ local command(cmd, params, repl) = [cmd, params % repl];
 				},
 			},
 		},
-	})
+	}),
+
+	"after_start.make-plugin.sh" : applianceConf.waitForContainerHealthStatus(containerConf, 'healthy')
 }
