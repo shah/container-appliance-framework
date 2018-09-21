@@ -53,6 +53,13 @@ local webServicePortInContainer = webServicePort;
 		},
 	}),
 
+	"after_configure.make-plugin.sh": |||
+		#!/bin/bash
+		GRAFANA_PROV_DASHBOARDS_HOME=etc/provisioning/dashboards
+		echo "Replacing DS_PROMETHEUS with 'Prometheus' in $GRAFANA_PROV_DASHBOARDS_HOME"
+		sed -i 's/$${DS_PROMETHEUS}/Prometheus/g' $GRAFANA_PROV_DASHBOARDS_HOME/*.json
+	|||,
+
 	"etc/provisioning/datasources/prometheus.yml" : std.manifestYamlDoc({
 		apiVersion: 1,
 		datasources: [
