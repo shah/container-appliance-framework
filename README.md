@@ -106,11 +106,11 @@ This is the order of directories that is searched for *.jsonnet files when **imp
 is called from within a container.defn.jsonnet configuration file:
 
 * CAF_HOME/*container* (the container definition home directory, e.g. CAF_HOME/samba)
-* CAF_HOME/conf/secrets
-* $HOME/.CAF/conf
-* CAF_HOME/../conf ("conf" in the CAF's parent directory)
-* CAF_HOME/conf/open
-* CAF_HOME/lib
+* CAF_HOME/conf/secrets (not tracked by git, should contain secrets by default)
+* $HOME/.CAF/conf (not tracked by CAF git, tied to user's HOME folder, may contain open configs or secrets)
+* CAF_HOME/../conf ("conf" in the CAF's parent directory, not tracked by CAF git, may contain open configs or secrets)
+* CAF_HOME/conf/open ("open" because this directory will be tracked by Git and should not contain secrets)
+* CAF_HOME/lib (should not contain secrets)
 
 ## Secrets Management
 
@@ -123,5 +123,5 @@ container. Because --jpath includes the **CAF_HOME/conf/secrets** directory, it 
 configuration files easily.
 
 NOTE: *The CAF_HOME/conf/secrets directory is in CAF_HOME/conf/.gitignore so it will not be tracked by Git.*
-To help get started with CAF, the CAF_HOME/Makefile copies lib/secrets-default to CAF_HOME/screts when
-the *check-dependencies* target is run.
+To help get started with CAF, the CAF_HOME/Makefile copies CAF_HOME/conf/secrets-samples to CAF_HOME/conf/secrets 
+when the *check-dependencies* target is run.
