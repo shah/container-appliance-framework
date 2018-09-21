@@ -1,7 +1,9 @@
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
+local sqlAgentConf = import "sql-agent.conf.jsonnet";
+local prometheusSqlAgentExporterConf = import "prometheus-sql-agent-exporter.conf.jsonnet";
 
-local webServicePort = applianceConf.sharedContainers.prometheusSqlAgentExporter.webServicePort;
+local webServicePort = prometheusSqlAgentExporterConf.webServicePort;
 local webServicePortInContainer = webServicePort;
 
 {
@@ -21,7 +23,7 @@ local webServicePortInContainer = webServicePort;
 				],
 				// TODO: replace the -service config with a CAF.libsonnet function call so multiple containers can share
 				command: "-port "+ webServicePortInContainer + " " +
-				         "-service http://" + containerConf.DOCKER_HOST_IP_ADDR + ":" + applianceConf.sharedContainers.sqlAgent.webServicePort + " " +
+				         "-service http://" + containerConf.DOCKER_HOST_IP_ADDR + ":" + sqlAgentConf.webServicePort + " " +
 				         "-config /data-sources.yml " +
 						 "-queryDir /queries"
 			}

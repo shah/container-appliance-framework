@@ -1,3 +1,5 @@
+# Generated on Thu Sep 20 20:37:36 EDT 2018 by Makefile. DO NOT EDIT
 container.conf.json
 .container.defn.jsonnet_generated
 docker-compose.yml
+etc/provisioning/datasources/prometheus.yml

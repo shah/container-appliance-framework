@@ -1,7 +1,9 @@
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
+local prometheusConf = import "prometheus.conf.jsonnet";
+local prometheusSqlAgentExporterConf = import "prometheus-sql-agent-exporter.conf.jsonnet";
 
-local webServicePort = 8010;
+local webServicePort = prometheusConf.webServicePort;
 local webServicePortInContainer = webServicePort;
 local promConfigFileInContainer = '/etc/prometheus/prometheus.yml';
 local tsdbStoragePathInContainer = '/var/prometheus/data';
@@ -49,19 +51,6 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 		},
 	}),
 
-	// this file will be symlink'd from ../grafana/etc/provisioning/datasources/prometheus.yml
-	"grafana-provisioning-datasource.yml" : std.manifestYamlDoc({
-		apiVersion: 1,
-		datasources: [
-			{
-				name: "Prometheus",
-				type: "prometheus",
-				access: "proxy",
-				url: 'http://' + containerConf.DOCKER_HOST_IP_ADDR + ":" + webServicePort
-			},
-		],
-	}),
-
 	"prometheus.yml" : std.manifestYamlDoc({
 		global: {
 			scrape_interval: "1m",
@@ -89,7 +78,7 @@ local tsdbStoragePathInContainer = '/var/prometheus/data';
 			{
 				job_name: "sql-agent",
 				scrape_interval: "1m", // watch this carefully and make sure sql-agent exporter doesn't encounter jitter
-				static_configs: [ { targets: [containerConf.DOCKER_HOST_IP_ADDR + ":" + applianceConf.sharedContainers.prometheusSqlAgentExporter.webServicePort] } ]
+				static_configs: [ { targets: [containerConf.DOCKER_HOST_IP_ADDR + ":" + prometheusSqlAgentExporterConf.webServicePort] } ]
 			},
 			{
 				job_name: "cadvisor",

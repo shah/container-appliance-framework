@@ -1,5 +1,6 @@
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
+local sqlAgentConf = import "sql-agent.conf.jsonnet";
 
 {
 	"docker-compose.yml" : std.manifestYamlDoc({
@@ -10,7 +11,7 @@ local containerConf = import "container.conf.json";
 				container_name: containerConf.containerName,
 				image: 'dbhi/sql-agent',
 				restart: 'always',
-				ports: [applianceConf.sharedContainers.sqlAgent.webServicePort + ':5000'],
+				ports: [sqlAgentConf.webServicePort + ':5000'],
 				networks: ['network'],
 				labels: {
 					'traefik.enable': 'true',

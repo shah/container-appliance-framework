@@ -1,2 +1,2 @@
 # This folder should not be tracked by Git because it includes plaintext passwords
-.secrets
+secrets

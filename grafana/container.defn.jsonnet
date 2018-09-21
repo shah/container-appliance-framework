@@ -1,6 +1,7 @@
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
 local containerSecrets = import "grafana.secrets.jsonnet";
+local prometheusConf = import "prometheus.conf.jsonnet";
 
 local webServicePort = 3000;
 local webServicePortInContainer = webServicePort;
@@ -50,5 +51,17 @@ local webServicePortInContainer = webServicePort;
 				name: containerConf.containerName
 			},
 		},
+	}),
+
+	"etc/provisioning/datasources/prometheus.yml" : std.manifestYamlDoc({
+		apiVersion: 1,
+		datasources: [
+			{
+				name: "Prometheus",
+				type: "prometheus",
+				access: "proxy",
+				url: 'http://' + containerConf.DOCKER_HOST_IP_ADDR + ":" + prometheusConf.webServicePort
+			},
+		],
 	}),
 }

@@ -1,7 +1,18 @@
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
 
+local webServicePort = 4260;
+
 {
+	"Dockerfile" : |||
+		FROM openjdk:8-alpine
+		ADD https://github.com/KyleU/databaseflow/releases/download/v1.5.1/DatabaseFlow.jar /root/DatabaseFlow.jar
+		WORKDIR /root
+		VOLUME ["/root/.databaseflow"]
+		EXPOSE %(webServicePort)d
+		CMD ["java", "-jar" , "DatabaseFlow.jar"]
+	||| % { webServicePort: webServicePort },
+
 	"docker-compose.yml" : std.manifestYamlDoc({
 		version: '3.4',
 
@@ -11,7 +22,7 @@ local containerConf = import "container.conf.json";
 				container_name: containerConf.containerName,
 				image: containerConf.containerName + ':latest',
 				restart: 'always',
-				ports: ['4260:4260'],
+				ports: [webServicePort + ':' + webServicePort],
 				networks: ['network'],
 				volumes: ['storage:/root/.databaseflow'],
 				labels: {

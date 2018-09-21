@@ -1,7 +1,8 @@
 local applianceConf = import "CAF.conf.jsonnet";
 local containerConf = import "container.conf.json";
+local mtailExporterConf = import "prometheus-mtail-exporter.conf.json";
 
-local webServicePort = applianceConf.sharedContainers.mtailExporter.webServicePort;
+local webServicePort = mtailExporterConf.webServicePort;
 local webServicePortInContainer = webServicePort;
 local mtailProgramsHomeInHost = containerConf.containerDefnHome + "/mtail-3.0.0-rc16-examples";
 local mtailProgramsHomeInContainer = "/etc/mtail";

@@ -3,9 +3,13 @@ MAKEFLAGS := silent
 CWD := `pwd`
 ZSH_THEME := 'appliance'
 
-# CAF_SECRETS_HOME is where all credentials and other secrets are stored
-# If you change the variable value, edit lib/Makefile.container and .gitignore too
-CAF_SECRETS_HOME := ./.secrets
+# CAF_CONF_OPEN_HOME is where all disclosed (non-secret) configurations are placed
+# CAF_CONF_SECRETS_HOME is where all credentials and other secrets are stored
+# If you change the variable values, edit lib/Makefile.container and .gitignore too
+CAF_CONF_HOME := ./conf
+CAF_CONF_OPEN_HOME := $(CAF_CONF_HOME)/open
+CAF_CONF_SECRETS_HOME := $(CAF_CONF_HOME)/secrets
+CAF_CONF_SECRETS_SAMPLES_HOME := $(CAF_CONF_HOME)/secrets-samples
 
 JSONNET_INSTALLED := $(shell command -v jsonnet 2> /dev/null)
 JQ_INSTALLED := $(shell command -v jq 2> /dev/null)
@@ -94,21 +98,29 @@ endif
 setup-docker-networks:
 	docker network create $(DOCKER_NETWORK_DEFAULT)
 
-restore-secrets-to-defaults:
-	rm -rf $(CAF_SECRETS_HOME)
-	cp -r $(CWD)/lib/secrets-default $(CAF_SECRETS_HOME)
-	echo "Removed $(CAF_SECRETS_HOME), copied starter from lib/secrets-default"
+setup-secrets-from-samples:
+	rm -rf $(CAF_CONF_SECRETS_HOME)
+	cp -r $(CAF_CONF_SECRETS_SAMPLES_HOME) $(CAF_CONF_SECRETS_HOME)
+	echo "Removed $(CAF_CONF_SECRETS_HOME), copied starter from $(CAF_CONF_SECRETS_SAMPLES_HOME)"
 
 setup-secrets:
-ifneq ("$(wildcard $(CAF_SECRETS_HOME))","")
-	echo "[*] Found secrets directory at $(CAF_SECRETS_HOME)"
+ifneq ("$(wildcard $(CAF_CONF_SECRETS_HOME))","")
+	echo "[*] Found secrets directory at $(CAF_CONF_SECRETS_HOME)"
 else
-	cp -r $(CWD)/lib/secrets-default $(CAF_SECRETS_HOME)
-	echo "[*] Did not find $(CAF_SECRETS_HOME) directory, copied starter from lib/secrets-default"
+	cp -r $(CAF_CONF_SECRETS_SAMPLES_HOME) $(CAF_CONF_SECRETS_HOME)
+	echo "[*] Did not find $(CAF_CONF_SECRETS_HOME) directory, copied starter from $(CAF_CONF_SECRETS_SAMPLES_HOME)"
+endif
+
+setup-conf: setup-secrets
+ifneq ("$(wildcard $(CAF_CONF_OPEN_HOME))","")
+	echo "[*] Found open (disclosed, non-secret) configs directory at $(CAF_CONF_OPEN_HOME)"
+else
+	cp -r $(CAF_CONF_SECRETS_SAMPLES_HOME) $(CAF_CONF_SECRETS_HOME)
+	echo "[*] Did not find $(CAF_CONF_SECRETS_HOME) directory, copied starter from $(CAF_CONF_SECRETS_SAMPLES_HOME)"
 endif
 
 ## See if all developer dependencies are installed
-check-dependencies: setup-ubuntu-repositories check-jsonnet check-jq check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop check-prometheus-node-exporter setup-secrets
+check-dependencies: setup-ubuntu-repositories check-jsonnet check-jq check-docker check-docker-compose check-user-in-docker-group check-docker-networks check-ctop check-prometheus-node-exporter setup-conf
 	printf "[*] "
 	make -v | head -1
 	echo "[*] Shell: $$SHELL"
