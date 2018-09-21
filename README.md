@@ -105,12 +105,12 @@ JSONNET_JPATH Makefile variable defined in CAF_HOME/lib/Makefile.container.
 This is the order of directories that is searched for *.jsonnet files when **import "*file*.conf.jsonnet"**
 is called from within a container.defn.jsonnet configuration file:
 
-* CAF_HOME/*container* (the container definition home directory, e.g. CAF_HOME/samba)
-* CAF_HOME/conf/secrets (not tracked by git, should contain secrets by default)
-* $HOME/.CAF/conf (not tracked by CAF git, tied to user's HOME folder, may contain open configs or secrets)
-* CAF_HOME/../conf ("conf" in the CAF's parent directory, not tracked by CAF git, may contain open configs or secrets)
-* CAF_HOME/conf/open ("open" because this directory will be tracked by Git and should not contain secrets)
-* CAF_HOME/lib (should not contain secrets)
+1. **CAF_HOME/*container*** (the container definition home directory, e.g. CAF_HOME/samba)
+2. **CAF_HOME/conf/secrets** (not tracked by git, should contain secrets by default)
+3. **$HOME/.CAF/conf** (not tracked by CAF git, tied to user's HOME folder, may contain open configs or secrets)
+4. **CAF_HOME/../conf** ("conf" in the CAF's parent directory, not tracked by CAF git, may contain open configs or secrets)
+5. **CAF_HOME/conf/open** ("open" because this directory will be tracked by Git and should not contain secrets)
+6. **CAF_HOME/lib** (should not contain secrets)
 
 ## Secrets Management
 
